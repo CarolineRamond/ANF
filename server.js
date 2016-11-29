@@ -6,7 +6,7 @@ var path = require('path');
 var server = express();
 
 // dossier statique (tous les fichiers du 
-// dossier seront chargés dans le navigateur)
+// dossier pourront être chargés dans le navigateur)
 server.use(express.static('client'));
 
 
