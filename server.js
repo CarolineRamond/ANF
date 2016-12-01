@@ -21,3 +21,19 @@ server.get('/', function (request, response) {
 server.listen(8000, function () {
 	console.log('Server now listening on port 8000');
 });
+
+
+// création du serveur de sockets
+var io = require('socket.io').listen(8080);
+
+// détection des connexions
+io.on('connection', function (socket) {
+
+    console.log('Connexion détectée');
+    
+    // détection des déconnexions
+    socket.on('disconnect', function() {
+        console.log('Déconnexion détectée');
+    });
+
+});
