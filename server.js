@@ -36,4 +36,21 @@ io.on('connection', function (socket) {
         console.log('Déconnexion détectée');
     });
 
+    // détection évènement 'hello'
+    socket.on('hello', function (data) {
+    	console.log('Message reçu : ' + data.message + 		' from ' + data.from);
+    
+    	// réponse à l'émetteur
+    	// socket.emit('welcome', data.from);
+
+    	// réponse à tous les clients
+    	// io.emit('welcome', data.from);
+
+    	// broadcast : réponse à tous les clients
+    	// sauf l'émetteur
+    	socket.broadcast.emit('welcome', data.from);
+
+    });		
+
+
 });

@@ -5,6 +5,13 @@ app.controller('myCtrl', ['$scope', function ($scope) {
 	// connexion au serveur de sockets
 	var socket = io.connect('http://localhost:8080');
 
+	// détection des évènements 'welcome'
+	socket.on('welcome', function (data) {    	
+	    console.log('Welcome ' + data);    
+	});
+
+
+
 	// expose la variable myTitle
 	$scope.myTitle = 'Hello World';
 
@@ -14,8 +21,10 @@ app.controller('myCtrl', ['$scope', function ($scope) {
 	});
 
 	// expose la fonction sayHello
-	$scope.sayHello = function () {
-	    alert('Hello World');
-    };
+	$scope.sayHello = function () {		
+	    var obj = { message: 'Hello', from: $scope.myVar };
+	    socket.emit('hello', obj);   
+	};
+
 
 }]);
