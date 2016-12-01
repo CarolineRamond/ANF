@@ -12,7 +12,8 @@ app.controller('myCtrl', ['$scope', function ($scope) {
 
 	// détection des évènements 'data'
 	socket.on('calc_data', function (data) { 
-	    $scope.message = new Float64Array(data.data); 
+		var array = new Float64Array(data.data); 
+	    $scope.message = JSON.stringify(array);
 	    console.log($scope.message);
 
 	    // force le rafraîchissement de la vue

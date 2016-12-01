@@ -27,6 +27,9 @@ server.listen(8000, function () {
 // création du serveur de sockets
 var io = require('socket.io').listen(8080);
 
+// map socketId - processus de calcul
+var processes = {};
+
 // détection des connexions
 io.on('connection', function (socket) {
 
@@ -54,22 +57,27 @@ io.on('connection', function (socket) {
     });		
 
     // détection évènement 'launch_calc'
-    socket.on('launch_calc', launchCalc);
+    socket.on('launch_calc', function () {
+        launchCalc(socket.id);
+    });
 
     // détection évènement 'data'
     socket.on('data', sendData);
 });
 
 
+
+
 // fonction lancement calcul
-function launchCalc() {
-    var cmd = 'python calcul.py';
+function launchCalc(socketId) {
+    var cmd = 'python calcul.py ' + socketId;
     var ps = child_process.exec(cmd, function (error, stdout, stderr) { 
         console.log('Un processus s\'est terminé');
     });
+    processes[socketId] = ps;
 }
 
 // fonction envoi de données
-function sendData(data) {
-    io.emit('calc_data', data);
+function sendData(message) {
+    io.to(message.clientId).emit('calc_data', message);
 }
