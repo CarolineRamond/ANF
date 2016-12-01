@@ -8,38 +8,38 @@
 	   <!-- chargement socketIO -->
 	   <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 
+       <!-- chargement threeJS -->
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r72/three.js">
+        </script>
+
+        <!-- chargement OrbitControls (librairie threeJS) -->
+        <script src="OrbitControls.js"></script>
+
     </header>
 
 	<body ng-app='myApp'>
-	    <section ng-controller='myCtrl'>
+	    <section ng-controller='myCtrl' ng-init="init()">
 		
-	    	<h1 ng-bind='myTitle'></h1>
+	    	<canvas tjs style="position:absolute;top:15%;height:70%;width:80%;left:10%;
+                border:2px solid #AAAAAA;" spheres="spheres">
+            </canvas>
 
-			<input type='text' ng-model='param'></input>
+            <div style="position:absolute;bottom:0;height:10%;width:100%;left:0;
+                border:2px solid #AAAAAA;">
+                <button ng-click="addSphere()">Add Sphere</button>
+                <button ng-click="removeSphere()">Remove Sphere</button>
+                <button ng-click="switchCalc()">
+                    {{calcOn ? 'Stopper le calculateur' : 'Démarrer le calculateur'}}
+                </button>
+            </div>
 
-        	<br>
-        	<br>
-        	<!-- bouton lancement calcul -->
-        	<button ng-click='launchCalc()'>
-        		Lancement calculateur
-        	</button>
-
-        	<br>
-        	<br>
-        	<!-- bouton terminer calcul -->
-        	<button ng-click='endCalc()'>
-        		Terminer le calcul
-        	</button>
-
-        	<br>
-        	<br>
-
-        	<div>Message du calculateur :</div>
-        	<div ng-bind="message"></div>
 	    </section>
 	</body>
 
 	<!-- chargement application angular -->
 	<script type="text/javascript" src='app.js'></script>
+
+    <!-- chargement code directive -->
+    <script type="text/javascript" src='tjsDirective.js'></script>
 </html>
 

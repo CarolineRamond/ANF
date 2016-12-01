@@ -61,8 +61,8 @@ clientio.on('connection', function (socket) {
     });	
 
     // détection évènement 'launch_calc'
-    socket.on('launch_calc', function () {
-        launchCalc(socket.id);
+    socket.on('launch_calc', function (message) {
+        launchCalc(socket.id, message.number);
     });
 
     // détection évènement 'end_calc'
@@ -71,15 +71,15 @@ clientio.on('connection', function (socket) {
     });
 
     // détection évènement 'change_param'
-    socket.on('change_param', function (param) {
-        changeParam(socket.id, param);
+    socket.on('change_param', function (message) {
+        changeParam(socket.id, message.number);
     });
 });
 
 // fonction lancement calcul
-function launchCalc(socketId) {
+function launchCalc(socketId, number) {
     if (!processes[socketId]) {
-        var cmd = 'python calcul.py ' + socketId;
+        var cmd = 'python calcul.py ' + socketId + ' ' + number;
         var ps = child_process.exec(cmd, function (error, stdout, stderr) { 
             console.log('Un processus s\'est terminé');
         });
@@ -110,9 +110,15 @@ calcio.on('connection', function (socket) {
     console.log('Calculateur connecté');
     var clientId = socket.request._query.clientId;
     clientToPs[clientId] = socket.id;
+    clientio.to(clientId).emit('calc_on');
 
     // détection évènement 'data'
     socket.on('data', sendData);
+
+    // détection déconnexion
+    socket.on('disconnect', function () {
+        clientio.to(clientId).emit('calc_off');
+    });
 
 });
 
