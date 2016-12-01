@@ -39,4 +39,10 @@ app.controller('myCtrl', ['$scope', function ($scope) {
 		socket.emit('launch_calc');
 	};
 
+
+	// fonction terminer calcul
+	$scope.endCalc = function () {
+		socket.emit('end_calc');
+	};
+
 }]);

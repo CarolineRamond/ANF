@@ -38,6 +38,7 @@ io.on('connection', function (socket) {
     // détection des déconnexions
     socket.on('disconnect', function() {
         console.log('Déconnexion détectée');
+        endCalc(socket.id);
     });
 
     // détection évènement 'hello'
@@ -87,4 +88,12 @@ function launchCalc(socketId) {
 // fonction envoi de données
 function sendData(message) {
     io.to(message.clientId).emit('calc_data', message);
+}
+
+// fonction terminaison calcul
+function endCalc(socketId) {
+    var ps = processes[socketId];
+    if (ps) {
+        ps.kill('SIGTERM');
+    }
 }
