@@ -13,7 +13,7 @@ class Main():
             buff = bytearray(positions.tobytes())
             self.socketIO.emit('data', 
                 { "data" : buff });
-            self.socketIO.wait(seconds=0.1)
+            self.socketIO.wait(seconds=1)
 
 
 if __name__ =="__main__":

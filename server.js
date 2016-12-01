@@ -1,6 +1,7 @@
 // dépendances
 var express = require('express');
 var path = require('path');
+var child_process = require('child_process');
 
 // création du serveur
 var server = express();
@@ -52,5 +53,15 @@ io.on('connection', function (socket) {
 
     });		
 
-
+    // détection évènement 'launch_calc'
+    socket.on('launch_calc', launchCalc);
 });
+
+
+// fonction lancement calcul
+function launchCalc() {
+    var cmd = 'python calcul.py';
+    var ps = child_process.exec(cmd, function (error, stdout, stderr) { 
+        console.log('Un processus s\'est terminé');
+    });
+}

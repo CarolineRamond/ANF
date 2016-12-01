@@ -26,5 +26,9 @@ app.controller('myCtrl', ['$scope', function ($scope) {
 	    socket.emit('hello', obj);   
 	};
 
+	// fonction lancement calculateur
+	$scope.launchCalc = function () {
+		socket.emit('launch_calc');
+	};
 
 }]);
