@@ -1,6 +1,22 @@
 <html>
-	<body>
-	    <h1>Hello World</h1>
+	<header>
+	   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.js">
+	   </script>
+    </header>
+
+
+	<body ng-app='myApp'>
+	    <section ng-controller='myCtrl'>
+		
+	    	<h1 ng-bind='myTitle'></h1>
+
+			<input type='text' ng-model='myVar'></input>
+
+        	<button ng-click='sayHello()'>Hello</button>
+
+	    </section>
 	</body>
+
+	<script type="text/javascript" src='app.js'></script>
 </html>
 
