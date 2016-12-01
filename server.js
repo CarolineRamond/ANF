@@ -70,11 +70,13 @@ io.on('connection', function (socket) {
 
 // fonction lancement calcul
 function launchCalc(socketId) {
-    var cmd = 'python calcul.py ' + socketId;
-    var ps = child_process.exec(cmd, function (error, stdout, stderr) { 
-        console.log('Un processus s\'est terminé');
-    });
-    processes[socketId] = ps;
+    if (!processes[socketId]) {
+       var cmd = 'python calcul.py ' + socketId;
+       var ps = child_process.exec(cmd, function (error, stdout, stderr) { 
+           console.log('Un processus s\'est terminé');
+       });
+       processes[socketId] = ps; 
+    }
 }
 
 // fonction envoi de données
