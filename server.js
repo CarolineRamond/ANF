@@ -1,8 +1,14 @@
-// dépendances
+// ==========================================
+// dépendances ==============================
+// ==========================================
 var express = require('express');
 var path = require('path');
 var child_process = require('child_process');
 
+
+// ==========================================
+// SERVEUR EXPRESS ==========================
+// ==========================================
 // création du serveur
 var server = express();
 
@@ -24,8 +30,15 @@ server.listen(8000, function () {
 });
 
 
+// ==========================================
+// SERVEUR DE SOCKETS =======================
+// ==========================================
 // création du serveur de sockets
 var io = require('socket.io').listen(8080);
+
+// namespaces
+var clientio = io.of('/client');
+var calcio = io.of('/calc');
 
 // map socketId - processus de calcul
 var processes = {};
@@ -33,38 +46,19 @@ var processes = {};
 // map socketId processus - socketId interface
 var clientToPs = {};
 
-// détection des connexions
-io.on('connection', function (socket) {
 
-    console.log('Connexion détectée');
+// ==========================================
+// SOCKETS CLIENTS ==========================
+// ==========================================
+clientio.on('connection', function (socket) {
 
-    var clientId = socket.request._query.clientId;
-    if (clientId) {
-        // un calculateur s'est connecté
-        clientToPs[clientId] = socket.id;
-    }
+    console.log('Client connecté');
     
     // détection des déconnexions
     socket.on('disconnect', function() {
-        console.log('Déconnexion détectée');
+        console.log('Client déconnecté');
         endCalc(socket.id);
-    });
-
-    // détection évènement 'hello'
-    socket.on('hello', function (data) {
-    	console.log('Message reçu : ' + data.message + 		' from ' + data.from);
-    
-    	// réponse à l'émetteur
-    	// socket.emit('welcome', data.from);
-
-    	// réponse à tous les clients
-    	// io.emit('welcome', data.from);
-
-    	// broadcast : réponse à tous les clients
-    	// sauf l'émetteur
-    	socket.broadcast.emit('welcome', data.from);
-
-    });		
+    });	
 
     // détection évènement 'launch_calc'
     socket.on('launch_calc', function () {
@@ -80,13 +74,7 @@ io.on('connection', function (socket) {
     socket.on('change_param', function (param) {
         changeParam(socket.id, param);
     });
-
-    // détection évènement 'data'
-    socket.on('data', sendData);
 });
-
-
-
 
 // fonction lancement calcul
 function launchCalc(socketId) {
@@ -99,21 +87,39 @@ function launchCalc(socketId) {
     }
 }
 
-// fonction envoi de données
-function sendData(message) {
-    io.to(message.clientId).emit('calc_data', message);
-}
-
 // fonction terminaison calcul
 function endCalc(socketId) {
     var ps = processes[socketId];
     if (ps) {
         ps.kill('SIGTERM');
+        delete processes[socketId];
     }
 }
 
 // fonction changement de paramètre
 function changeParam(socketId, param) {
     processSocketId = clientToPs[socketId];
-    io.to(processSocketId).emit('change_param', param);
+    calcio.to(processSocketId).emit('change_param', param);
 }
+
+// ==========================================
+// SOCKETS CALCULATEURS =====================
+// ==========================================
+calcio.on('connection', function (socket) {
+
+    console.log('Calculateur connecté');
+    var clientId = socket.request._query.clientId;
+    clientToPs[clientId] = socket.id;
+
+    // détection évènement 'data'
+    socket.on('data', sendData);
+
+});
+
+// fonction envoi de données
+function sendData(message) {
+    clientio.to(message.clientId).emit('calc_data', message);
+}
+
+
+

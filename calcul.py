@@ -1,4 +1,4 @@
-from socketIO_client import SocketIO
+from socketIO_client import SocketIO, BaseNamespace
 import numpy as np
 import numpy.random as npr
 import sys
@@ -7,9 +7,10 @@ import sys
 class Main():
     def __init__(self, parent = None):
         self.clientId = sys.argv[1]
-        self.socketIO = SocketIO('localhost', 8080, params={"clientId" : self.clientId })
+        self.socketIO = SocketIO('localhost', 8080, BaseNamespace, params={"clientId" : self.clientId })
+        self.namespace = self.socketIO.define(BaseNamespace, '/calc')
         self.param = 3
-        self.socketIO.on('change_param', self.change_param)
+        self.namespace.on('change_param', self.change_param)
 
     def change_param(self, *args):
         self.param = int(args[0])
@@ -18,7 +19,7 @@ class Main():
         while 1:
             positions = npr.uniform(low=0.0,high=10.0,size=self.param)
             buff = bytearray(positions.tobytes())
-            self.socketIO.emit('data', 
+            self.namespace.emit('data', 
                 { "data" : buff, "clientId" : self.clientId });
             self.socketIO.wait(seconds=1)
 

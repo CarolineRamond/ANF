@@ -3,7 +3,7 @@ var app = angular.module('myApp', []);
 app.controller('myCtrl', ['$scope', function ($scope) {
 
 	// connexion au serveur de sockets
-	var socket = io.connect('http://localhost:8080');
+	var socket = io.connect('http://localhost:8080/client');
 
 	// détection des évènements 'welcome'
 	socket.on('welcome', function (data) {    	
