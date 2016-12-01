@@ -6,12 +6,17 @@ import sys
 
 class Main():
     def __init__(self, parent = None):
-        self.socketIO = SocketIO('localhost', 8080)
         self.clientId = sys.argv[1]
+        self.socketIO = SocketIO('localhost', 8080, params={"clientId" : self.clientId })
+        self.param = 3
+        self.socketIO.on('change_param', self.change_param)
+
+    def change_param(self, *args):
+        self.param = int(args[0])
 
     def run(self):
         while 1:
-            positions = npr.uniform(low=0.0,high=10.0,size=3)
+            positions = npr.uniform(low=0.0,high=10.0,size=self.param)
             buff = bytearray(positions.tobytes())
             self.socketIO.emit('data', 
                 { "data" : buff, "clientId" : self.clientId });

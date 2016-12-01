@@ -30,10 +30,19 @@ var io = require('socket.io').listen(8080);
 // map socketId - processus de calcul
 var processes = {};
 
+// map socketId processus - socketId interface
+var clientToPs = {};
+
 // détection des connexions
 io.on('connection', function (socket) {
 
     console.log('Connexion détectée');
+
+    var clientId = socket.request._query.clientId;
+    if (clientId) {
+        // un calculateur s'est connecté
+        clientToPs[clientId] = socket.id;
+    }
     
     // détection des déconnexions
     socket.on('disconnect', function() {
@@ -67,6 +76,11 @@ io.on('connection', function (socket) {
         endCalc(socket.id);
     });
 
+    // détection évènement 'change_param'
+    socket.on('change_param', function (param) {
+        changeParam(socket.id, param);
+    });
+
     // détection évènement 'data'
     socket.on('data', sendData);
 });
@@ -96,4 +110,10 @@ function endCalc(socketId) {
     if (ps) {
         ps.kill('SIGTERM');
     }
+}
+
+// fonction changement de paramètre
+function changeParam(socketId, param) {
+    processSocketId = clientToPs[socketId];
+    io.to(processSocketId).emit('change_param', param);
 }

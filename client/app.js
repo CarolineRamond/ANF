@@ -24,8 +24,10 @@ app.controller('myCtrl', ['$scope', function ($scope) {
 	$scope.myTitle = 'Hello World';
 
 	// surveille la variable 'myVar'
-	$scope.$watch('myVar', function () {
-	    console.log($scope.myVar);
+	$scope.$watch('param', function () {
+		if ($scope.param) {
+	    	socket.emit('change_param', $scope.param);
+		}
 	});
 
 	// expose la fonction sayHello
