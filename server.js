@@ -55,6 +55,9 @@ io.on('connection', function (socket) {
 
     // détection évènement 'launch_calc'
     socket.on('launch_calc', launchCalc);
+
+    // détection évènement 'data'
+    socket.on('data', sendData);
 });
 
 
@@ -64,4 +67,9 @@ function launchCalc() {
     var ps = child_process.exec(cmd, function (error, stdout, stderr) { 
         console.log('Un processus s\'est terminé');
     });
+}
+
+// fonction envoi de données
+function sendData(data) {
+    io.emit('calc_data', data);
 }

@@ -10,7 +10,14 @@ app.controller('myCtrl', ['$scope', function ($scope) {
 	    console.log('Welcome ' + data);    
 	});
 
+	// détection des évènements 'data'
+	socket.on('calc_data', function (data) { 
+	    $scope.message = new Float64Array(data.data); 
+	    console.log($scope.message);
 
+	    // force le rafraîchissement de la vue
+	    $scope.$apply();  
+	});
 
 	// expose la variable myTitle
 	$scope.myTitle = 'Hello World';
